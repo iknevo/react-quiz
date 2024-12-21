@@ -1,28 +1,48 @@
-import { useState } from "react";
+import { useReducer } from "react";
 
+const initialState = { count: 0, step: 1 };
+function reducer(state, action) {
+  switch (action.type) {
+    case "inc":
+      return { ...state, count: state.count + state.step };
+    case "dec":
+      return { ...state, count: state.count - state.step };
+    case "setCount":
+      return { ...state, count: action.payload };
+    case "setStep":
+      return { ...state, step: action.payload };
+    case "reset":
+      return initialState;
+    default:
+      throw new Error("Unknown action");
+  }
+}
 function DateCounter() {
-  const [step, setStep] = useState(1);
-  const [count, setCount] = useState(0);
+  const [{ step, count }, dispatch] = useReducer(reducer, initialState);
 
+  // This mutates the date object.
   const date = new Date();
   date.setDate(date.getDate() + count);
 
-  function defineStep(e) {
-    setStep(+e.target.value);
-  }
-  function defineCount(e) {
-    setCount(+e.target.value);
-  }
-  function increment() {
-    setCount((count) => count + step);
-  }
-  function decrement() {
-    setCount((count) => count - step);
-  }
-  function reset() {
-    setStep(1);
-    setCount(0);
-  }
+  const dec = function () {
+    dispatch({ type: "dec" });
+  };
+
+  const inc = function () {
+    dispatch({ type: "inc" });
+  };
+
+  const defineCount = function (e) {
+    dispatch({ type: "setCount", payload: +e.target.value });
+  };
+
+  const defineStep = function (e) {
+    dispatch({ type: "setStep", payload: +e.target.value });
+  };
+
+  const reset = function () {
+    dispatch({ type: "reset" });
+  };
 
   return (
     <div className="counter">
@@ -38,9 +58,9 @@ function DateCounter() {
       </div>
 
       <div>
-        <button onClick={decrement}>-</button>
+        <button onClick={dec}>-</button>
         <input value={count} onChange={defineCount} />
-        <button onClick={increment}>+</button>
+        <button onClick={inc}>+</button>
       </div>
 
       <p>{date.toDateString()}</p>
