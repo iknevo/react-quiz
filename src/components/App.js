@@ -13,6 +13,7 @@ const initialState = {
   status: "loading",
   currQuestionIndex: 0,
   selecedAnswer: null,
+  score: 0,
 };
 function reducer(state, action) {
   switch (action.type) {
@@ -25,8 +26,15 @@ function reducer(state, action) {
     case "nexQuestion":
       return { ...state, currQuestionIndex: state.currQuestionIndex + 1 };
     case "selectAnswer":
-      return { ...state, selecedAnswer: action.payload };
-
+      const question = state.questions.at(state.currQuestionIndex);
+      return {
+        ...state,
+        selecedAnswer: action.payload,
+        score:
+          action.payload === question.correctOption
+            ? state.score + question.points
+            : state.score,
+      };
     default:
       throw new Error("Unknown action!");
   }
