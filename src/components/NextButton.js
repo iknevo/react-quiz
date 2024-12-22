@@ -1,11 +1,11 @@
 export default function NextButton({
   dispatch,
   answer,
-  currentQuestionIndex,
+  index,
   numOfQuestions,
 }) {
   if (answer === null) return;
-  if (currentQuestionIndex < numOfQuestions - 1)
+  if (index < numOfQuestions - 1)
     return (
       <button
         className="btn btn-ui"
@@ -14,7 +14,7 @@ export default function NextButton({
         Next
       </button>
     );
-  if (currentQuestionIndex === numOfQuestions - 1)
+  if (index === numOfQuestions - 1)
     return (
       <button
         className="btn btn-ui"

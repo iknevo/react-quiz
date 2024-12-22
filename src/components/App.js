@@ -14,8 +14,8 @@ const initialState = {
   questions: [],
   // loading, error, ready, active, finished
   status: "loading",
-  currQuestionIndex: 0,
-  selecedAnswer: null,
+  index: 0,
+  answer: null,
   score: 0,
   highScore: 0,
 };
@@ -28,10 +28,10 @@ function reducer(state, action) {
     case "startQuiz":
       return { ...state, status: "active" };
     case "selectAnswer":
-      const question = state.questions.at(state.currQuestionIndex);
+      const question = state.questions.at(state.index);
       return {
         ...state,
-        selecedAnswer: action.payload,
+        answer: action.payload,
         score:
           action.payload === question.correctOption
             ? state.score + question.points
@@ -40,8 +40,8 @@ function reducer(state, action) {
     case "nextQuestion":
       return {
         ...state,
-        currQuestionIndex: state.currQuestionIndex + 1,
-        selecedAnswer: null,
+        index: state.index + 1,
+        answer: null,
       };
     case "finish":
       return {
@@ -63,10 +63,8 @@ function reducer(state, action) {
 }
 
 export default function App() {
-  const [
-    { questions, status, currQuestionIndex, selecedAnswer, score, highScore },
-    dispatch,
-  ] = useReducer(reducer, initialState);
+  const [{ questions, status, index, answer, score, highScore }, dispatch] =
+    useReducer(reducer, initialState);
   const numOfQuestions = questions.length;
   const maxScore = questions.reduce((a, b) => a + b.points, 0);
 
@@ -84,21 +82,21 @@ export default function App() {
         {status === "active" && (
           <>
             <Progress
-              currQuestionIndex={currQuestionIndex}
+              index={index}
               numOfQuestions={numOfQuestions}
               maxScore={maxScore}
               score={score}
-              selecedAnswer={selecedAnswer}
+              answer={answer}
             />
             <Question
-              currentQuestion={questions.at(currQuestionIndex)}
+              currentQuestion={questions.at(index)}
               dispatch={dispatch}
-              answer={selecedAnswer}
+              answer={answer}
             />
             <NextButton
               dispatch={dispatch}
-              answer={selecedAnswer}
-              currentQuestionIndex={currQuestionIndex}
+              answer={answer}
+              index={index}
               numOfQuestions={numOfQuestions}
             />
           </>

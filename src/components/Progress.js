@@ -1,20 +1,17 @@
 export default function Progress({
-  currQuestionIndex,
+  index,
   numOfQuestions,
   maxScore,
   score,
-  selectedAnswer,
+  answer,
 }) {
   return (
     <header className="progress">
-      <progress
-        max={numOfQuestions}
-        value={currQuestionIndex + Number(selectedAnswer !== null)}
-      />
+      <progress max={numOfQuestions} value={index + Number(answer !== null)} />
       <p>
         Question{" "}
         <strong>
-          {currQuestionIndex + 1} / {numOfQuestions}
+          {index + 1} / {numOfQuestions}
         </strong>
       </p>
       <p>
