@@ -12,6 +12,7 @@ const initialState = {
   // loading, error, ready, active, finished
   status: "loading",
   currQuestionIndex: 0,
+  selecedAnswer: null,
 };
 function reducer(state, action) {
   switch (action.type) {
@@ -23,6 +24,8 @@ function reducer(state, action) {
       return { ...state, status: "active" };
     case "nexQuestion":
       return { ...state, currQuestionIndex: state.currQuestionIndex + 1 };
+    case "selectAnswer":
+      return { ...state, selecedAnswer: action.payload };
 
     default:
       throw new Error("Unknown action!");
@@ -30,10 +33,8 @@ function reducer(state, action) {
 }
 
 export default function App() {
-  const [{ questions, status, currQuestionIndex }, dispatch] = useReducer(
-    reducer,
-    initialState
-  );
+  const [{ questions, status, currQuestionIndex, selecedAnswer }, dispatch] =
+    useReducer(reducer, initialState);
   const numOfQuestions = questions.length;
 
   useQuestions(dispatch);
@@ -48,7 +49,11 @@ export default function App() {
           <StartScreen numOfQuestions={numOfQuestions} dispatch={dispatch} />
         )}
         {status === "active" && (
-          <Question currentQuestion={questions.at(currQuestionIndex)} />
+          <Question
+            currentQuestion={questions.at(currQuestionIndex)}
+            dispatch={dispatch}
+            answer={selecedAnswer}
+          />
         )}
       </Main>
     </div>
