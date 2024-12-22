@@ -6,6 +6,8 @@ import Error from "./Error";
 import StartScreen from "./StartScreen";
 import Question from "./Question";
 import useQuestions from "../hooks/useQuestions";
+import NextButton from "./NextButton";
+import Progress from "./Progress";
 
 const initialState = {
   questions: [],
@@ -23,8 +25,12 @@ function reducer(state, action) {
       return { ...state, status: "error" };
     case "startQuiz":
       return { ...state, status: "active" };
-    case "nexQuestion":
-      return { ...state, currQuestionIndex: state.currQuestionIndex + 1 };
+    case "nextQuestion":
+      return {
+        ...state,
+        currQuestionIndex: state.currQuestionIndex + 1,
+        selecedAnswer: null,
+      };
     case "selectAnswer":
       const question = state.questions.at(state.currQuestionIndex);
       return {
@@ -41,9 +47,10 @@ function reducer(state, action) {
 }
 
 export default function App() {
-  const [{ questions, status, currQuestionIndex, selecedAnswer }, dispatch] =
-    useReducer(reducer, initialState);
-  const numOfQuestions = questions.length;
+  const [
+    { questions, status, currQuestionIndex, selecedAnswer, score },
+    dispatch,
+  ] = useReducer(reducer, initialState);
 
   useQuestions(dispatch);
 
@@ -54,14 +61,22 @@ export default function App() {
         {status === "loading" && <Loader />}
         {status === "error" && <Error />}
         {status === "ready" && (
-          <StartScreen numOfQuestions={numOfQuestions} dispatch={dispatch} />
+          <StartScreen numOfQuestions={questions.length} dispatch={dispatch} />
         )}
         {status === "active" && (
-          <Question
-            currentQuestion={questions.at(currQuestionIndex)}
-            dispatch={dispatch}
-            answer={selecedAnswer}
-          />
+          <>
+            <Progress
+              currQuestionIndex={currQuestionIndex}
+              questions={questions}
+              score={score}
+            />
+            <Question
+              currentQuestion={questions.at(currQuestionIndex)}
+              dispatch={dispatch}
+              answer={selecedAnswer}
+            />
+            <NextButton dispatch={dispatch} answer={selecedAnswer} />
+          </>
         )}
       </Main>
     </div>
