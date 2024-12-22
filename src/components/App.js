@@ -69,6 +69,7 @@ export default function App() {
               currQuestionIndex={currQuestionIndex}
               questions={questions}
               score={score}
+              selecedAnswer={selecedAnswer}
             />
             <Question
               currentQuestion={questions.at(currQuestionIndex)}

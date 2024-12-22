@@ -1,8 +1,17 @@
-export default function Progress({ currQuestionIndex, questions, score }) {
+export default function Progress({
+  currQuestionIndex,
+  questions,
+  score,
+  selectedAnswer,
+}) {
   const numOfQuestions = questions.length;
-  const maxPoints = questions.reduce((a, b) => a + b.points, 0);
+  const maxScore = questions.reduce((a, b) => a + b.points, 0);
   return (
     <header className="progress">
+      <progress
+        max={numOfQuestions}
+        value={currQuestionIndex + Number(selectedAnswer !== null)}
+      />
       <p>
         Question{" "}
         <strong>
@@ -10,7 +19,7 @@ export default function Progress({ currQuestionIndex, questions, score }) {
         </strong>
       </p>
       <p>
-        <strong>{score}</strong> / {maxPoints}
+        <strong>{score}</strong> / {maxScore}
       </p>
     </header>
   );
