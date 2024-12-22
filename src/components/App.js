@@ -8,6 +8,7 @@ import Question from "./Question";
 import useQuestions from "../hooks/useQuestions";
 import NextButton from "./NextButton";
 import Progress from "./Progress";
+import FinishScreen from "./FinishScreen";
 
 const initialState = {
   questions: [],
@@ -16,6 +17,7 @@ const initialState = {
   currQuestionIndex: 0,
   selecedAnswer: null,
   score: 0,
+  highScore: 0,
 };
 function reducer(state, action) {
   switch (action.type) {
@@ -25,12 +27,6 @@ function reducer(state, action) {
       return { ...state, status: "error" };
     case "startQuiz":
       return { ...state, status: "active" };
-    case "nextQuestion":
-      return {
-        ...state,
-        currQuestionIndex: state.currQuestionIndex + 1,
-        selecedAnswer: null,
-      };
     case "selectAnswer":
       const question = state.questions.at(state.currQuestionIndex);
       return {
@@ -41,6 +37,26 @@ function reducer(state, action) {
             ? state.score + question.points
             : state.score,
       };
+    case "nextQuestion":
+      return {
+        ...state,
+        currQuestionIndex: state.currQuestionIndex + 1,
+        selecedAnswer: null,
+      };
+    case "finish":
+      return {
+        ...state,
+        status: "finished",
+        highScore:
+          state.score > state.highScore ? state.score : state.highScore,
+      };
+    case "restart":
+      return {
+        ...initialState,
+        highScore: state.highScore,
+        questions: state.questions,
+        status: "ready",
+      };
     default:
       throw new Error("Unknown action!");
   }
@@ -48,9 +64,11 @@ function reducer(state, action) {
 
 export default function App() {
   const [
-    { questions, status, currQuestionIndex, selecedAnswer, score },
+    { questions, status, currQuestionIndex, selecedAnswer, score, highScore },
     dispatch,
   ] = useReducer(reducer, initialState);
+  const numOfQuestions = questions.length;
+  const maxScore = questions.reduce((a, b) => a + b.points, 0);
 
   useQuestions(dispatch);
 
@@ -67,7 +85,8 @@ export default function App() {
           <>
             <Progress
               currQuestionIndex={currQuestionIndex}
-              questions={questions}
+              numOfQuestions={numOfQuestions}
+              maxScore={maxScore}
               score={score}
               selecedAnswer={selecedAnswer}
             />
@@ -76,7 +95,22 @@ export default function App() {
               dispatch={dispatch}
               answer={selecedAnswer}
             />
-            <NextButton dispatch={dispatch} answer={selecedAnswer} />
+            <NextButton
+              dispatch={dispatch}
+              answer={selecedAnswer}
+              currentQuestionIndex={currQuestionIndex}
+              numOfQuestions={numOfQuestions}
+            />
+          </>
+        )}
+        {status === "finished" && (
+          <>
+            <FinishScreen
+              score={score}
+              maxScore={maxScore}
+              highScore={highScore}
+              dispatch={dispatch}
+            />
           </>
         )}
       </Main>

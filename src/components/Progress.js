@@ -1,11 +1,10 @@
 export default function Progress({
   currQuestionIndex,
-  questions,
+  numOfQuestions,
+  maxScore,
   score,
   selectedAnswer,
 }) {
-  const numOfQuestions = questions.length;
-  const maxScore = questions.reduce((a, b) => a + b.points, 0);
   return (
     <header className="progress">
       <progress
