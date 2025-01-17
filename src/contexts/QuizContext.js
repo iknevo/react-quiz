@@ -82,7 +82,7 @@ function QuizProvider({ children }) {
       try {
         const res = await fetch("https://api.npoint.io/a96cffa7290237fc4878");
         const data = await res.json();
-        dispatch({ type: "dataReceived", payload: data });
+        dispatch({ type: "dataReceived", payload: data.questions });
       } catch (error) {
         dispatch({ type: "dataFailed" });
       }
